@@ -1,0 +1,29 @@
+pipeline {
+  agent any
+  tools {nodejs "node" }
+  stages {
+    stage('Cloning Git') {
+      steps {
+        git 'https://github.com/wakaleo/game-of-life.git'
+      }
+    }
+        stage('Build'){
+            steps{
+                 sh script: 'mvn clean package'
+         }
+       }
+}
+ }
+ stage('JIRA') {
+    def testIssue = [fields: [ project: [key: 'IN'],
+                                 summary: 'New JIRA Created from Jenkins.',
+                                 description: 'New JIRA Created from Jenkins.',
+                                 issuetype: [id: '10004']]]
+
+      response = jiraNewIssue issue: testIssue, site: 'JIRA'
+
+      echo response.successful.toString()
+      echo response.data.toString()
+    }
+
+
